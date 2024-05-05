@@ -1,0 +1,36 @@
+Title: Extracting Interface Names and IP Addresses with ifconfig Command
+
+To retrieve all interfaces and their corresponding IP addresses using the `ifconfig` command, you can utilize tools like `awk`, `grep`, or `sed` to filter the output. Here's how you can achieve it with different commands:
+
+Using awk:
+
+```bash
+ifconfig | awk '/inet / {print $1, $2}'
+```
+
+This command filters the output of `ifconfig` to display only lines containing "inet" (signifying an IP address), then prints the interface name and IP address.
+
+For a more concise output with just interface names and their corresponding IPs, you can use grep:
+
+```bash
+ifconfig | grep -Eo '^[^ ]+|inet [^ ]+' | awk 'NR%2{printf "%s ", $0; next} 1'
+```
+
+This command extracts interface names and IP addresses using `grep`, then formats them into a single line for each interface using `awk`.
+
+These commands are compatible with most Unix-like systems. However, on Linux distributions, you might prefer using the `ip` command, as `ifconfig` is deprecated on some systems.
+
+Note: "Inet" in networking contexts represents "Internet Protocol." It signifies an IPv4 address assigned to a network interface. When running commands like `ifconfig` or `ip addr`, the "inet" output indicates the IPv4 address assigned to the respective interface. For instance:
+
+```
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.100  netmask 255.255.255.0  broadcast 192.168.1.255
+        inet6 fe80::e00:1111:2222:3333  prefixlen 64  scopeid 0x20<link>
+        ether 00:11:22:33:44:55  txqueuelen 1000  (Ethernet)
+        RX packets 12345  bytes 67890 (67.8 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 54321  bytes 98765 (98.7 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+In this example, `inet 192.168.1.100` indicates that the IPv4 address assigned to the `eth0` interface is `192.168.1.100`.
